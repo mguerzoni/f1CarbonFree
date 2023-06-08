@@ -1,4 +1,5 @@
 import math
+from itertools import islice
 
 
 # define a function to find the key given its value
@@ -65,6 +66,13 @@ points = {
 }
 
 
+dict_values = list(points.values()) # copy the values of the dictonary in a list
+actual_distance = 0 # initialize the actual distance
+# calculate the total distance in the actual calendar
+it = 1
+for current_v, next_v in zip(dict_values, islice(dict_values, 1, None)):
+    actual_distance += distance(current_v[0], current_v[1], next_v[0], next_v[1])
+
 # use the nearest neighbor algorithm to find the shortest path through the points
 total_distance = 0 # initialize total_distance
 current_point = points["Bahrain"] # start at first point
@@ -84,11 +92,20 @@ while (len(points)) > 0: # repeat until all points have been visited
     total_distance += distance(current_point[0], current_point[1], next_point[0], next_point[1]) # add the distance to the total distance
     current_point = next_point # update the current point
 
+# boring stuff for layout
+max_lenght = max(len(string) for string in circuit_path)
+dist = 3
+
 # print the order of the points in the path
 print("Order of race tracks:")
 for circuit in circuit_path:
-    print(circuit)
+    output = f"{circuit:<{max_lenght}} {' ' * dist}->"
+    print(output)
 
-
+# print the actual distance
+print("\nActually F1 is travelling: %.2f." % actual_distance)
 # print the total distance
-print("Total distance: %.2f kilometers" % total_distance)
+print("With the optimal calendar would travel: %.2f kilometers." % total_distance)
+# build the optimization and print it
+optimization = actual_distance/total_distance
+print("With these changes F1 would improve their efficiency of %.2fX." % optimization)
